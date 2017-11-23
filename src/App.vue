@@ -1,13 +1,25 @@
 <template>
-  <div id="app">
-    <img src="./assets/logo.png">
-    <router-view/>
+    <div>
+      <navbar></navbar>
+      <div class="row r10">
+        <div class="col-md-2">
+          <sidebar></sidebar>
+        </div>
+        <div class="col-md-10">
+          <div id="app">
+            <router-view></router-view>
+          </div>
+        </div>
+      </div>
   </div>
 </template>
 
 <script>
+  import Navbar from './components/Navbar'
+  import Sidebar from './components/Sidebar'
   export default {
-    name: 'app'
+    name: 'app',
+    components: {Navbar, Sidebar}
   }
 </script>
 
@@ -18,6 +30,10 @@
     -moz-osx-font-smoothing: grayscale;
     text-align: center;
     color: #2c3e50;
-    margin-top: 60px;
+    /*margin-top: 60px;*/
+  }
+  .r10{
+    margin: 0;
+    padding: 10px;
   }
 </style>

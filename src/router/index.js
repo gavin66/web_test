@@ -1,15 +1,21 @@
 import Vue from 'vue'
-import Router from 'vue-router'
-import Hello from '@/components/Hello'
+import VueRouter from 'vue-router'
+import List from '@/components/List'
+import Add from '@/components/Add'
 
-Vue.use(Router)
+Vue.use(VueRouter)
 
-export default new Router({
+export default new VueRouter({
+  mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello
+      name: 'list',
+      component: List
+    }, {
+      path: '/add',
+      name: 'add',
+      component: Add
     }
   ]
 })
