@@ -9,12 +9,10 @@ export default new VueRouter({
   mode: 'history',
   routes: [
     {
-      path: '/',
-      name: 'list',
+      path: '/list',
       component: List
     }, {
       path: '/add',
-      name: 'add',
       component: Add
     }
   ]

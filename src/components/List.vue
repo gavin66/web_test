@@ -42,6 +42,7 @@
       <template slot="isActive" scope="row">{{row.value ? 'Yes :)' : 'No :('}}</template>
       <template slot="actions" scope="row">
         <!-- We use click.stop here to prevent a 'row-clicked' event from also happening -->
+        <b-btn size="sm" @click.stop="details(row.item,row.index,$event.target)">修改</b-btn>
         <b-btn size="sm" @click.stop="details(row.item,row.index,$event.target)">删除</b-btn>
       </template>
     </b-table>

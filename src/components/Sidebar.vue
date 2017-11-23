@@ -4,21 +4,32 @@
     <div>
       <b-btn v-b-toggle.collapse3 class='btn btn-block btn-sm s-btn'>产品管理</b-btn>
       <b-collapse visible id="collapse3">
-        <b-btn class='btn btn-block btn-sm s-btn'>列表</b-btn>
-        <b-btn class='btn btn-block btn-sm s-btn'>新增</b-btn>
+        <b-btn class='btn btn-block btn-sm' @click="toList">列表</b-btn>
+        <b-btn class='btn btn-block btn-sm' @click="toAdd">新增</b-btn>
       </b-collapse>
     </div>
   </div>
 </template>
 
-<style>
-  .s-btn{
-
+<script>
+  export default {
+    methods: {
+      toList () {
+        this.$router.push('/list')
+      },
+      toAdd () {
+        this.$router.push('/add')
+      }
+    }
   }
-  #collapse3{
+</script>
+
+<style>
+  #collapse3 {
     width: 90%;
     margin: 0 auto;
   }
+
   .btn.btn-block {
     margin-top: 1px;
   }
