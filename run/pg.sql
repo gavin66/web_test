@@ -1,3 +1,10 @@
+-- 创建用户，数据库，赋予权限
+-- create user web_user with password '123456';
+-- create database web_test owner web_test;
+-- grant all privileges on database web_test to web_user;
+-- alter table products_es owner to web_user;
+
+-- 必须 superuser 创建扩展
 create extension multicorn;
 
 CREATE SERVER multicorn_es FOREIGN DATA WRAPPER multicorn
@@ -17,7 +24,7 @@ CREATE FOREIGN TABLE products_es (
     name text,
     price numeric(10,2),
     description text
-) SERVER multicorn_es OPTIONS (host '127.0.0.1', port '9200', node 'web_test', index 'products');
+) SERVER multicorn_es OPTIONS (host '127.0.0.1', port '9200', node 'products', index 'product');
 
 CREATE OR REPLACE FUNCTION index_product() RETURNS trigger AS $def$
     BEGIN

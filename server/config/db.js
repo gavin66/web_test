@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize')
 
-const pgDB = new Sequelize('web_test', 'root', '123456', {
+const pgDB = new Sequelize('web_test', 'web_user', '123456', {
   host: 'localhost',
   port: 5432,
   logging: false,

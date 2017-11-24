@@ -1,7 +1,7 @@
 <template>
     <div>
       <navbar></navbar>
-      <div class="row r10">
+      <div class="row p-10">
         <div class="col-md-2">
           <sidebar></sidebar>
         </div>
@@ -28,11 +28,8 @@
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    /*margin-top: 60px;*/
   }
-  .r10{
+  .p-10{
     margin: 0;
     padding: 10px;
   }
