@@ -1,124 +1,175 @@
 <template>
   <div>
-    <div class="my-1 row">
-      <div class="col-md-6">
-        <b-form-group horizontal label="每页条数" :label-cols="6">
-          <b-form-select :options="pageOptions" v-model="perPage"/>
-        </b-form-group>
-      </div>
-      <div class="col-md-6">
-        <b-form-group horizontal label="搜索" :label-cols="3">
-          <b-input-group>
-            <b-form-input v-model="filter" placeholder="请输入"/>
-            <b-input-group-button>
-              <b-btn @click="filter = ''">清除</b-btn>
-            </b-input-group-button>
-          </b-input-group>
-        </b-form-group>
-      </div>
-    </div>
+    <b-form-input v-model="qString" type="text" placeholder="搜索" @keyup.enter.native="search"></b-form-input>
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">ID</th>
+        <th scope="col"> 产品名</th>
+        <th scope="col">价格</th>
+        <th scope="col">描述</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr v-for="item in items">
+        <td>{{ item.id}}</td>
+        <td>{{ item.name}}</td>
+        <td>{{ item.price}}</td>
+        <td>{{ item.description}}</td>
+        <td>
+          <b-button @click="editItem(item,!modalShow1)">编辑</b-button>
+          <b-button @click="dropItem(item.id,!modalShow2)">删除</b-button>
+        </td>
+      </tr>
+      </tbody>
+    </table>
 
-    <div class="row my-1">
-      <div class="col-sm-8">
-        <b-pagination :total-rows="totalRows" :per-page="perPage" v-model="currentPage"/>
-      </div>
-      <div class="col-sm-4 text-md-right">
-        <b-button :disabled="!sortBy" @click="sortBy = null">Clear Sort</b-button>
-      </div>
-    </div>
+    <b-pagination size="md" align="center" :total-rows="totalRows" v-model="currentPage"
+                  :per-page="perPage"></b-pagination>
 
-    <!-- Main table element -->
-    <b-table striped hover show-empty
-             :items="items"
-             :fields="fields"
-             :current-page="currentPage"
-             :per-page="perPage"
-             :filter="filter"
-             :sort-by.sync="sortBy"
-             :sort-desc.sync="sortDesc"
-             @filtered="onFiltered"
-    >
-      <template slot="name" scope="row">{{row.value.first}} {{row.value.last}}</template>
-      <template slot="isActive" scope="row">{{row.value ? 'Yes :)' : 'No :('}}</template>
-      <template slot="actions" scope="row">
-        <!-- We use click.stop here to prevent a 'row-clicked' event from also happening -->
-        <b-btn size="sm" @click.stop="details(row.item,row.index,$event.target)">修改</b-btn>
-        <b-btn size="sm" @click.stop="details(row.item,row.index,$event.target)">删除</b-btn>
-      </template>
-    </b-table>
+    <b-modal v-model="modalShow1" ref="modal" title="更新产品信息" @ok="editSubmit">
+      <form @submit.prevent="validateBeforeSubmit">
+        <div class="form-group">
+          <b-form-input class="form-control" type="text" placeholder="产品名" v-model="editData.name"
+                        v-validate="'required'" name="name" id="name"></b-form-input>
+          <small v-show="errors.has('name')" class="form-text text-danger"> {{ errors.first('name') }} </small>
+        </div>
+        <div class="form-group">
+          <b-form-input class="form-control" type="text" placeholder="价格" v-model="editData.price"
+                        v-validate="'decimal'" name="price" id="price"></b-form-input>
+          <small v-show="errors.has('price')" class="form-text text-danger"> {{ errors.first('price') }} </small>
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" id="description" name="description" rows="5"
+                    v-model="editData.description"></textarea>
+        </div>
+      </form>
+    </b-modal>
 
-    <p>
-      Sort By: {{ sortBy || 'n/a' }}, Direction: {{ sortDesc ? 'descending' : 'ascending' }}
-    </p>
-
-    <!-- Details modal -->
-    <b-modal id="modal1" @hide="resetModal" ok-only>
-      <h4 class="my-1 py-1" slot="modal-header">Index: {{ modalDetails.index }}</h4>
-      <pre>{{ modalDetails.data }}</pre>
+    <b-modal v-model="modalShow2" ref="modal" @ok="dropSubmit" centered>
+      <p class="my-4 drop-item">确定删除？</p>
     </b-modal>
 
   </div>
 </template>
-
 <script>
-  const items = [
-    {id: 1, isActive: true, age: 40, name: {first: 'Dickerson', last: 'Macdonald'}},
-    {id: 2, isActive: false, age: 21, name: {first: 'Larsen', last: 'Shaw'}},
-    {
-      id: 3, isActive: false, age: 9, name: {first: 'Mini', last: 'Navarro'}
-    },
-    {isActive: false, age: 89, name: {first: 'Geneva', last: 'Wilson'}},
-    {isActive: true, age: 38, name: {first: 'Jami', last: 'Carney'}},
-    {isActive: false, age: 27, name: {first: 'Essie', last: 'Dunlap'}},
-    {isActive: true, age: 40, name: {first: 'Thor', last: 'Macdonald'}},
-    {
-      _cellVariants: {age: 'danger', isActive: 'warning'},
-      isActive: true,
-      age: 87,
-      name: {first: 'Larsen', last: 'Shaw'}
-    },
-    {isActive: false, age: 26, name: {first: 'Mitzi', last: 'Navarro'}},
-    {isActive: false, age: 22, name: {first: 'Genevieve', last: 'Wilson'}},
-    {isActive: true, age: 38, name: {first: 'John', last: 'Carney'}},
-    {isActive: false, age: 29, name: {first: 'Dick', last: 'Dunlap'}}
-  ]
-
   export default {
-    data () {
+    data: function () {
       return {
-        items: items,
-        fields: {
-          id: {label: 'ID', sortable: true, 'class': 'text-center'},
-          name: {label: '产品名'},
-          description: {label: '描述'},
-          price: {label: '价格'},
-          actions: {label: '操作'}
-        },
+        items: [],
+        totalRows: 0,
+        perPage: 10,
         currentPage: 1,
-        perPage: 7,
-        totalRows: items.length,
-        pageOptions: [{text: 5, value: 5}, {text: 10, value: 10}, {text: 15, value: 15}],
-        sortBy: null,
-        sortDesc: false,
-        filter: null,
-        modalDetails: {index: '', data: ''}
+//        isPreviousPage: false,
+//        isNextPage: false,
+        qString: '',
+        editData: {},
+        dropId: null,
+        modalShow1: false,
+        modalShow2: false
       }
     },
     methods: {
-      details (item, index, button) {
-        this.modalDetails.data = JSON.stringify(item, null, 2)
-        this.modalDetails.index = index
-        this.$root.$emit('bv::show::modal', 'modal1', button)
+      productProvider () {
+        let url = 'http://localhost:3001/product'
+        let obj = {query: this.qString, page: this.currentPage}
+        let promise = this.$http.get(url, {params: obj})
+        promise.then((res) => {
+          if (res.status === 200) {
+            this.totalRows = res.data['hits']['total']
+//            if (count - 10 * this.currentPage > 0) {
+//              this.isNextPage = true
+//            }
+//            if (this.currentPage > 1) {
+//              this.isPreviousPage = true
+//            }
+            let arr = res.data['hits']['hits']
+            let data = []
+            arr.forEach(function (val) {
+              let item = val['_source']
+              item['id'] = val['_id']
+              data.push(item)
+            })
+            this.items = data
+          } else {
+            alert('获取失败')
+          }
+        }).catch(err => {
+          console.log(err)
+          return []
+        })
       },
-      resetModal () {
-        this.modalDetails.data = ''
-        this.modalDetails.index = ''
+      previousPage () {
+
       },
-      onFiltered (filteredItems) {
-        // Trigger pagination to update the number of buttons/pages due to filtering
-        this.totalRows = filteredItems.length
-        this.currentPage = 1
+      nextPage () {
+
+      },
+      editItem (item, modalShow1) {
+        this.modalShow1 = modalShow1
+        this.editData = item
+      },
+      editSubmit () {
+        this.$validator.validateAll().then((result) => {
+          if (result) {
+            let obj = {
+              name: this.editData.name,
+              price: this.editData.price,
+              description: this.editData.description
+            }
+//            let url = '/product/' + this.editData.id
+            let url = 'http://localhost:3001/product/' + this.editData.id
+            this.$http.put(url, obj).then((res) => {
+              if (res.status === 200) {
+//                this.$router.push('/list')
+                this.productProvider()
+              } else {
+                alert('更新失败')
+              }
+            }, (err) => {
+              console.log(err)
+              alert('更新失败')
+            })
+          }
+        })
+      },
+      dropItem (id, modalShow2) {
+        this.dropId = id
+        this.modalShow2 = modalShow2
+      },
+      dropSubmit () {
+        let obj = {
+          name: this.editData.name,
+          price: this.editData.price,
+          description: this.editData.description
+        }
+//      let url = '/product/' + this.dropId
+        let url = 'http://localhost:3001/product/' + this.dropId
+        this.$http.delete(url, obj).then((res) => {
+          if (res.status === 200) {
+//            this.$router.push('/list')
+            this.productProvider()
+          } else {
+            alert('删除失败')
+          }
+        }, (err) => {
+          console.log(err)
+          alert('删除失败')
+        })
+      },
+      search () {
+        this.productProvider()
       }
+    },
+    created () {
+      this.productProvider()
     }
   }
 </script>
+
+<style>
+  p.drop-item {
+    text-align: center;
+    font-size: 20px;
+  }
+</style>
