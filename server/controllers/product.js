@@ -1,18 +1,27 @@
 const productModel = require('../models/product')
 
-const homepage = async (ctx, next) => {
-  ctx.body = 'we are at home!'
+const list = async function (ctx) {
+  ctx.body = await productModel.list(ctx.request.query)
 }
 
-const getProduct = async function (ctx, next) {
-  const result = await productModel.getTest()
+const create = async function (ctx) {
+  const resp = await productModel.create(ctx.request.body)
   ctx.body = {
-    success: true,
-    result
+    resp
   }
 }
 
+const update = async function (ctx) {
+  ctx.body = await productModel.update(ctx.params.id, ctx.request.body)
+}
+
+const remove = async function (ctx) {
+  ctx.body = await productModel.remove(ctx.params.id)
+}
+
 module.exports = {
-  'GET /home': homepage,
-  'GET /': getProduct
+  'GET /product': list,
+  'POST /product': create,
+  'PUT /product/:id': update,
+  'DELETE /product/:id': remove
 }
