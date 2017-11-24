@@ -1,71 +1,52 @@
 <template>
-  <div class="content-add">
-    <form action="">
-      <b-form-group
-        id="name"
-        label="产品名"
-        :feedback="feedback"
-        valid-feedback="Thank you"
-        :state="state"
-      >
-        <b-form-input id="name" :state="state" v-model.trim="name" type="text"></b-form-input>
-      </b-form-group>
-      <b-form-group
-        id="descript"
-        label="产品描述"
-        :feedback="feedback"
-        valid-feedback="Thank you"
-        :state="state"
-      >
-        <b-form-input id="price" :state="state" v-model.trim="name" type="number"></b-form-input>
-      </b-form-group>
-      <b-form-group
-        id="descript"
-        label="产品描述"
-        :feedback="feedback"
-        valid-feedback="Thank you"
-        :state="state"
-      >
-        <b-form-textarea id="textarea1"
-                         v-model="text"
-                         placeholder="请输入..."
-                         :rows="4"
-                         :max-rows="6">
-        </b-form-textarea>
-      </b-form-group>
-
-      <div class="cleanfix">
-        <div class="pull-right">
-          <b-btn size="sm">保存</b-btn>
-        </div>
-      </div>
-    </form>
-  </div>
+  <form @submit.prevent="validateBeforeSubmit">
+    <div class="form-group">
+      <label class="col-form-label" for="name">产品名</label>
+      <input v-validate="'required'" type="text" class="form-control" name="name" id="name" v-model="name">
+      <small v-show="errors.has('name')" class="form-text text-danger"> {{ errors.first('name') }} </small>
+    </div>
+    <div class="form-group">
+      <label class="col-form-label" for="price">价格</label>
+      <input v-validate="'decimal'" type="text" class="form-control" name="price" id="price" v-model="price">
+      <small v-show="errors.has('price')" class="form-text text-danger"> {{ errors.first('price') }} </small>
+    </div>
+    <div class="form-group">
+      <label for="description">产品描述</label>
+      <textarea class="form-control" id="description" name="description" rows="5" v-model="description"></textarea>
+    </div>
+    <button type="submit" class="btn btn-secondary">保存</button>
+  </form>
 </template>
-
 <script>
   export default {
-    computed: {
-      nameState () {
-        return this.name.length > 2 ? null : false
-      }
-    },
-    data () {
-      return {
-        name: ''
+    data: () => ({
+      name: '',
+      price: '',
+      description: ''
+    }),
+    methods: {
+      validateBeforeSubmit () {
+        this.$validator.validateAll().then((result) => {
+          if (result) {
+            let obj = {
+              name: this.name,
+              price: this.price,
+              description: this.description
+            }
+            this.$http.post('http://localhost:3001/product', obj).then((res) => {
+              if (res.status === 200) {
+                this.$router.push('/list')
+              } else {
+                alert('新增失败')
+              }
+            }, (err) => {
+              console.log(err)
+              alert('新增失败')
+            }
+            )
+          }
+        })
       }
     }
   }
 </script>
-<style>
-  .content-add{
-    min-height: 300px;
-    background-color: #f7f7f7;
-    border-radius: 5px;
-    padding: 25px;
-  }
-  .content-add form{
-    text-align: left;
-  }
-
-</style>
