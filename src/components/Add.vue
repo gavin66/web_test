@@ -33,7 +33,9 @@
               price: this.price,
               description: this.description
             }
-            this.$http.post('http://localhost:3001/product', obj).then((res) => {
+//            let url = '/product'
+            let url = 'http://localhost:3001/product'
+            this.$http.post(url, obj).then((res) => {
               if (res.status === 200) {
                 this.$router.push('/list')
               } else {
