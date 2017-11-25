@@ -3,6 +3,11 @@ const elasticsearch = require('elasticsearch')
 const elasticClient = new elasticsearch.Client({
   host: 'localhost:9200',
   log: 'info'
+  // log: {
+  //   type: 'file',
+  //   level: 'trace',
+  //   path: '/tmp/elasticsearch.log'
+  // }
 })
 
 const elasticService = {}
@@ -28,16 +33,20 @@ elasticService.updateProduct = (id, name, price, description) => {
     type: type,
     id: id,
     body: {
-      name: name,
-      price: price,
-      description: description
+      doc: {
+        name: name,
+        price: price,
+        description: description
+      }
     }
   }, function (error, response) {
-    console.log(response)
+    // Todo 这里更新触发器不起作用
+    // console.log(response)
   })
 }
 
 elasticService.searchProduct = (input, page) => {
+  let perPage = 100
   let data = {}
   if (input) {
     data = elasticClient.search({
@@ -66,12 +75,19 @@ elasticService.searchProduct = (input, page) => {
             ]
           }
         },
-        from: 10 * (page - 1),
-        size: 10
+        from: perPage * (page - 1),
+        size: perPage
       }
     })
   } else {
-    data = elasticClient.search()
+    data = elasticClient.search({
+      index: index,
+      type: type,
+      body: {
+        from: perPage * (page - 1),
+        size: perPage
+      }
+    })
   }
   return data
 }

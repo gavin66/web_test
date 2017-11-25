@@ -24,8 +24,9 @@
       </tbody>
     </table>
 
-    <b-pagination size="md" align="center" :total-rows="totalRows" v-model="currentPage"
-                  :per-page="perPage"></b-pagination>
+    <!--<b-pagination-nav :link-gen="linkGen" :page-gen="pageGen" :number-of-pages="links.length" v-model="currentPage" />-->
+    <!--<b-pagination size="md" align="center" :total-rows="totalRows" v-model="currentPage"-->
+                  <!--:per-page="perPage"></b-pagination>-->
 
     <b-modal v-model="modalShow1" ref="modal" title="更新产品信息" @ok="editSubmit">
       <form @submit.prevent="validateBeforeSubmit">
@@ -58,7 +59,7 @@
       return {
         items: [],
         totalRows: 0,
-        perPage: 10,
+        perPage: 100,
         currentPage: 1,
 //        isPreviousPage: false,
 //        isNextPage: false,
@@ -71,7 +72,8 @@
     },
     methods: {
       productProvider () {
-        let url = 'http://localhost:3001/product'
+        let url = '/product'
+//        let url = 'http://localhost:3001/product'
         let obj = {query: this.qString, page: this.currentPage}
         let promise = this.$http.get(url, {params: obj})
         promise.then((res) => {
@@ -117,8 +119,8 @@
               price: this.editData.price,
               description: this.editData.description
             }
-//            let url = '/product/' + this.editData.id
-            let url = 'http://localhost:3001/product/' + this.editData.id
+            let url = '/product/' + this.editData.id
+//            let url = 'http://localhost:3001/product/' + this.editData.id
             this.$http.put(url, obj).then((res) => {
               if (res.status === 200) {
 //                this.$router.push('/list')
@@ -143,8 +145,8 @@
           price: this.editData.price,
           description: this.editData.description
         }
-//      let url = '/product/' + this.dropId
-        let url = 'http://localhost:3001/product/' + this.dropId
+      let url = '/product/' + this.dropId
+//        let url = 'http://localhost:3001/product/' + this.dropId
         this.$http.delete(url, obj).then((res) => {
           if (res.status === 200) {
 //            this.$router.push('/list')
