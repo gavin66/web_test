@@ -7,7 +7,8 @@ const productTable = pgDB.import(productSchema)
 const list = async function (param) {
   const input = param.query ? param.query : ''
   const page = param.page ? param.page : 1
-  const result = await elasticService.searchProduct(input, page)
+  const per = param.per ? param.per : 10
+  const result = await elasticService.searchProduct(input, page, per)
   return result
 }
 

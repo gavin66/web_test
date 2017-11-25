@@ -45,8 +45,7 @@ elasticService.updateProduct = (id, name, price, description) => {
   })
 }
 
-elasticService.searchProduct = (input, page) => {
-  let perPage = 100
+elasticService.searchProduct = (input, page, perPage) => {
   let data = {}
   if (input) {
     data = elasticClient.search({

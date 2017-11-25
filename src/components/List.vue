@@ -24,9 +24,7 @@
       </tbody>
     </table>
 
-    <!--<b-pagination-nav :link-gen="linkGen" :page-gen="pageGen" :number-of-pages="links.length" v-model="currentPage" />-->
-    <!--<b-pagination size="md" align="center" :total-rows="totalRows" v-model="currentPage"-->
-                  <!--:per-page="perPage"></b-pagination>-->
+    <b-pagination size="md" align="center" :total-rows="totalRows" v-model="currentPage" :per-page="perPage"></b-pagination>
 
     <b-modal v-model="modalShow1" ref="modal" title="更新产品信息" @ok="editSubmit">
       <form @submit.prevent="validateBeforeSubmit">
@@ -59,10 +57,8 @@
       return {
         items: [],
         totalRows: 0,
-        perPage: 100,
+        perPage: 10,
         currentPage: 1,
-//        isPreviousPage: false,
-//        isNextPage: false,
         qString: '',
         editData: {},
         dropId: null,
@@ -72,19 +68,12 @@
     },
     methods: {
       productProvider () {
-        let url = '/product'
-//        let url = 'http://localhost:3001/product'
-        let obj = {query: this.qString, page: this.currentPage}
+        let url = 'http://localhost:3001/product'
+        let obj = {query: this.qString, page: this.currentPage, per: this.perPage}
         let promise = this.$http.get(url, {params: obj})
         promise.then((res) => {
           if (res.status === 200) {
             this.totalRows = res.data['hits']['total']
-//            if (count - 10 * this.currentPage > 0) {
-//              this.isNextPage = true
-//            }
-//            if (this.currentPage > 1) {
-//              this.isPreviousPage = true
-//            }
             let arr = res.data['hits']['hits']
             let data = []
             arr.forEach(function (val) {
@@ -101,12 +90,6 @@
           return []
         })
       },
-      previousPage () {
-
-      },
-      nextPage () {
-
-      },
       editItem (item, modalShow1) {
         this.modalShow1 = modalShow1
         this.editData = item
@@ -119,8 +102,8 @@
               price: this.editData.price,
               description: this.editData.description
             }
-            let url = '/product/' + this.editData.id
-//            let url = 'http://localhost:3001/product/' + this.editData.id
+//            let url = '/product/' + this.editData.id
+            let url = 'http://localhost:3001/product/' + this.editData.id
             this.$http.put(url, obj).then((res) => {
               if (res.status === 200) {
 //                this.$router.push('/list')
@@ -145,8 +128,8 @@
           price: this.editData.price,
           description: this.editData.description
         }
-      let url = '/product/' + this.dropId
-//        let url = 'http://localhost:3001/product/' + this.dropId
+//      let url = '/product/' + this.dropId
+        let url = 'http://localhost:3001/product/' + this.dropId
         this.$http.delete(url, obj).then((res) => {
           if (res.status === 200) {
 //            this.$router.push('/list')
@@ -160,6 +143,11 @@
         })
       },
       search () {
+        this.productProvider()
+      }
+    },
+    watch: {
+      currentPage () {
         this.productProvider()
       }
     },
