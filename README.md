@@ -3,12 +3,12 @@
 > Vue.js,Koajs,PostgreSQL,Elasticsearch
 
 ## 安装与使用
-    1. 在 Koajs 上使 Elasticsearch 与 PostgreSQL 同步用到了 multicorn 和 pg-es-fdw 扩展，参考[这篇文章](https://yq.aliyun.com/articles/56824)
-    2. 需要执行一些数据库操作 `run/pg.sql`，建立用户，扩展，函数，触发器，表结构等,很多操作需要手动执行，不能直接运行文件
-    3. 执行 `node app.js` 查看服务是否正常启动
+1. 在 Koajs 上使 Elasticsearch 与 PostgreSQL 同步用到了 multicorn 和 pg-es-fdw 扩展，参考[这篇文章](https://yq.aliyun.com/articles/56824)
+2. 需要执行一些数据库操作 `run/pg.sql`，建立用户，扩展，函数，触发器，表结构等,很多操作需要手动执行，不能直接运行文件
+3. 执行 `node app.js` 查看服务是否正常启动
 
 ## 未完成
-  * update 触发器未实现，或许插件有问题
+  * update 触发器未实现，或许插件有问题。目前直接使用 ES API 更新。
   * 前端分页，未写完组件
 
 ## 截图
