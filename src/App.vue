@@ -6,9 +6,7 @@
           <sidebar></sidebar>
         </div>
         <div class="col-md-10">
-          <div id="app">
             <router-view></router-view>
-          </div>
         </div>
       </div>
   </div>

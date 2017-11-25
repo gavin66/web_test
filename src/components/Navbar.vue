@@ -1,8 +1,10 @@
 <template>
+  <!--<div>-->
+    <!--<router-link :to="{name: 'home'}">web_test</router-link>-->
+  <!--</div>-->
   <b-navbar toggleable="md" type="dark" variant="info">
     <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-    <b-navbar-brand @click="toList">web_test</b-navbar-brand>
-    <!--<route-link to="/list">web_test</route-link>-->
+    <b-navbar-brand @click="toHome">web_test</b-navbar-brand>
     <b-collapse is-nav id="nav_collapse">
       <b-navbar-nav>
         <b-nav-item @click="toList">产品列表</b-nav-item>
@@ -23,6 +25,9 @@
 <script>
   export default {
     methods: {
+      toHome () {
+        this.$router.push('/')
+      },
       toList () {
         this.$router.push('/list')
       }

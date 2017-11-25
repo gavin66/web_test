@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-btn class='btn btn-block btn-sm s-btn'>首页</b-btn>
+    <b-btn class='btn btn-block btn-sm s-btn' @click="toHome">首页</b-btn>
     <div>
       <b-btn v-b-toggle.collapse3 class='btn btn-block btn-sm s-btn'>产品管理</b-btn>
       <b-collapse visible id="collapse3">
@@ -14,6 +14,9 @@
 <script>
   export default {
     methods: {
+      toHome () {
+        this.$router.push('/')
+      },
       toList () {
         this.$router.push('/list')
       },
