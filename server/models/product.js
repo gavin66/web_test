@@ -30,7 +30,7 @@ const update = async function (id, data) {
       id: id
     }
   })
-  elasticService.updateProduct(id, data.name, data.price, data.description)
+  await elasticService.updateProduct(id, data.name, data.price, data.description)
   return result[0] === 1
 }
 
